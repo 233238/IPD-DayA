@@ -6,12 +6,11 @@
 #     move: A function that returns 'c' or 'b'
 ####
 
-team_name = 'The name the team gives to itself' # Only 10 chars displayed.
-strategy_name = 'The name the team gives to this strategy'
-strategy_description = 'How does this strategy decide?'
-    
-def move(my_history, their_history, my_score, their_score):
-    ''' Arguments accepted: my_history, their_history are strings.
+team_name = 'L9 team' # Only 10 chars displayed.
+strategy_name = 'Spaceglider'
+strategy_description = 'Probes the opponents responses to betrayal and collusion during the first three rounds, and plays off that.'
+
+'''Arguments accepted: my_history, their_history are strings.
     my_score, their_score are ints.
     
     Make my move.
@@ -26,9 +25,33 @@ def move(my_history, their_history, my_score, their_score):
     # Analyze my_history and their_history and/or my_score and their_score.
     # Decide whether to return 'c' or 'b'.
     
-    return 'c'
-
     
+def move(my_history, their_history, my_score, their_score):
+    if len(my_history) == 0: #First move, always betrays.
+        return 'b'
+    if len(my_history) == 1: #Second move, always colludes.
+        return 'c'
+    if len(my_history) >= 2: #If not the probing phase of the game do the following.
+        if 'b' in their_history[0] and 'b' in their_history[1]: #Checks if opponent colluded or betrayed every move for the first two rounds.
+            return 'b' #If opponent passes check above, betray every round for the rest of the game.
+        else:
+            if 'c' in their_history[0] and 'c' in their_history[1]:
+                if len(my_history) == 2:
+                    return 'b'
+                else:
+                    if len(my_history) > 2:
+                        if 'c' in their_history[2]:
+                            return 'b'
+                        else:
+                            return 'c'
+                if len(my_history) > 3:
+                    return their_history[-1]
+    if 'c' in their_history[0] and 'b' in their_history[1]:
+        if len(my_history) == 2:
+            return 'c'
+        else:
+            return their_history[-1]
+                    
 def test_move(my_history, their_history, my_score, their_score, result):
     '''calls move(my_history, their_history, my_score, their_score)
     from this module. Prints error if return value != result.
